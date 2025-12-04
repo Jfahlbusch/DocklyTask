@@ -1,0 +1,428 @@
+'use client';
+
+import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import { Task, Project, Customer, User, Category, Team, TaskStatus } from '@/lib/db';
+
+interface TaskContextType {
+  tasks: (Task & {
+    project?: Project;
+    customer?: Customer;
+    category?: Category;
+    assignee?: User;
+    createdBy?: User;
+    team?: Team;
+    taskStatus?: TaskStatus;
+    subtasks: any[];
+    attachments: any[];
+    comments: any[];
+  })[];
+  users: User[];
+  projects: Project[];
+  customers: Customer[];
+  categories: Category[];
+  teams: Team[];
+  taskStatuses: TaskStatus[];
+  loading: boolean;
+  error: string | null;
+  updateTask: (taskId: string, updates: Partial<Task>) => Promise<void>;
+  deleteTask: (taskId: string) => Promise<void>;
+  addTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  updateSubtask: (subtaskId: string, updates: any) => Promise<void>;
+  addSubtask: (subtask: any) => Promise<void>;
+  addComment: (comment: any) => Promise<void>;
+  updateComment: (commentId: string, updates: any) => Promise<void>;
+  deleteComment: (commentId: string) => Promise<void>;
+  addAttachment: (attachment: any) => Promise<void>;
+  deleteAttachment: (attachmentId: string) => Promise<void>;
+  addCommentAttachment: (attachment: any) => Promise<void>;
+  deleteCommentAttachment: (attachmentId: string) => Promise<void>;
+  refreshData: () => Promise<void>;
+}
+
+const TaskContext = createContext<TaskContextType | undefined>(undefined);
+
+export function TaskProvider({ children }: { children: ReactNode }) {
+  const [tasks, setTasks] = useState<TaskContextType['tasks']>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [taskStatuses, setTaskStatuses] = useState<TaskStatus[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const [tasksRes, usersRes, projectsRes, customersRes, categoriesRes, teamsRes, taskStatusesRes] = await Promise.all([
+        fetch('/api/tasks'),
+        fetch('/api/users'),
+        fetch('/api/projects'),
+        fetch('/api/customers'),
+        fetch('/api/categories'),
+        fetch('/api/teams'),
+        fetch('/api/task-statuses')
+      ]);
+
+      if (!tasksRes.ok || !usersRes.ok || !projectsRes.ok || !customersRes.ok || !categoriesRes.ok || !teamsRes.ok || !taskStatusesRes.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const [tasksData, usersData, projectsData, customersData, categoriesData, teamsData, taskStatusesData] = await Promise.all([
+        tasksRes.json(),
+        usersRes.json(),
+        projectsRes.json(),
+        customersRes.json(),
+        categoriesRes.json(),
+        teamsRes.json(),
+        taskStatusesRes.json()
+      ]);
+
+      setTasks(tasksData);
+      setUsers(usersData);
+      setProjects(projectsData);
+      setCustomers(customersData);
+      setCategories(categoriesData);
+      setTeams(teamsData);
+      setTaskStatuses(taskStatusesData);
+    } catch (err) {
+      console.error('Error fetching data:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const updateTask = async (taskId: string, updates: Partial<Task>) => {
+    try {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update task');
+      }
+
+      const updatedTask = await response.json();
+      setTasks(prev => prev.map(task => 
+        task.id === taskId ? updatedTask : task
+      ));
+    } catch (err) {
+      console.error('Error updating task:', err);
+      throw err;
+    }
+  };
+
+  const deleteTask = async (taskId: string) => {
+    try {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete task');
+      }
+
+      setTasks(prev => prev.filter(task => task.id !== taskId));
+    } catch (err) {
+      console.error('Error deleting task:', err);
+      throw err;
+    }
+  };
+
+  const addTask = async (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(task),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add task');
+      }
+
+      const newTask = await response.json();
+      setTasks(prev => [newTask, ...prev]);
+    } catch (err) {
+      console.error('Error adding task:', err);
+      throw err;
+    }
+  };
+
+  const updateSubtask = async (subtaskId: string, updates: any) => {
+    try {
+      const response = await fetch(`/api/subtasks/${subtaskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update subtask');
+      }
+
+      const updatedSubtask = await response.json();
+      setTasks(prev => prev.map(task => ({
+        ...task,
+        subtasks: task.subtasks.map((subtask: any) => 
+          subtask.id === subtaskId ? updatedSubtask : subtask
+        )
+      })));
+    } catch (err) {
+      console.error('Error updating subtask:', err);
+      throw err;
+    }
+  };
+
+  const addSubtask = async (subtask: any) => {
+    try {
+      const response = await fetch('/api/subtasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(subtask),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add subtask');
+      }
+
+      const newSubtask = await response.json();
+      setTasks(prev => prev.map(task => 
+        task.id === subtask.taskId 
+          ? { ...task, subtasks: [...task.subtasks, newSubtask] }
+          : task
+      ));
+    } catch (err) {
+      console.error('Error adding subtask:', err);
+      throw err;
+    }
+  };
+
+  const addComment = async (comment: any) => {
+    try {
+      const response = await fetch('/api/comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(comment),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add comment');
+      }
+
+      const newComment = await response.json();
+      setTasks(prev => prev.map(task => 
+        task.id === comment.taskId 
+          ? { ...task, comments: [newComment, ...task.comments] }
+          : task
+      ));
+    } catch (err) {
+      console.error('Error adding comment:', err);
+      throw err;
+    }
+  };
+
+  const updateComment = async (commentId: string, updates: any) => {
+    try {
+      const response = await fetch(`/api/comments/${commentId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update comment');
+      }
+
+      const updatedComment = await response.json();
+      setTasks(prev => prev.map(task => ({
+        ...task,
+        comments: task.comments.map((comment: any) => 
+          comment.id === commentId ? updatedComment : comment
+        )
+      })));
+    } catch (err) {
+      console.error('Error updating comment:', err);
+      throw err;
+    }
+  };
+
+  const deleteComment = async (commentId: string) => {
+    try {
+      const response = await fetch(`/api/comments/${commentId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete comment');
+      }
+
+      setTasks(prev => prev.map(task => ({
+        ...task,
+        comments: task.comments.filter((comment: any) => comment.id !== commentId)
+      })));
+    } catch (err) {
+      console.error('Error deleting comment:', err);
+      throw err;
+    }
+  };
+
+  const addAttachment = async (attachment: any) => {
+    try {
+      const response = await fetch('/api/task-attachments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(attachment),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add attachment');
+      }
+
+      const newAttachment = await response.json();
+      setTasks(prev => prev.map(task => 
+        task.id === attachment.taskId 
+          ? { ...task, attachments: [...task.attachments, newAttachment] }
+          : task
+      ));
+    } catch (err) {
+      console.error('Error adding attachment:', err);
+      throw err;
+    }
+  };
+
+  const deleteAttachment = async (attachmentId: string) => {
+    try {
+      const response = await fetch(`/api/task-attachments/${attachmentId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete attachment');
+      }
+
+      setTasks(prev => prev.map(task => ({
+        ...task,
+        attachments: task.attachments.filter((attachment: any) => attachment.id !== attachmentId)
+      })));
+    } catch (err) {
+      console.error('Error deleting attachment:', err);
+      throw err;
+    }
+  };
+
+  const addCommentAttachment = async (attachment: any) => {
+    try {
+      const response = await fetch('/api/comment-attachments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(attachment),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add comment attachment');
+      }
+
+      const newAttachment = await response.json();
+      setTasks(prev => prev.map(task => ({
+        ...task,
+        comments: task.comments.map((comment: any) => 
+          comment.id === attachment.commentId 
+            ? { ...comment, attachments: [...(comment.attachments || []), newAttachment] }
+            : comment
+        )
+      })));
+    } catch (err) {
+      console.error('Error adding comment attachment:', err);
+      throw err;
+    }
+  };
+
+  const deleteCommentAttachment = async (attachmentId: string) => {
+    try {
+      const response = await fetch(`/api/comment-attachments/${attachmentId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete comment attachment');
+      }
+
+      setTasks(prev => prev.map(task => ({
+        ...task,
+        comments: task.comments.map((comment: any) => ({
+          ...comment,
+          attachments: (comment.attachments || []).filter((attachment: any) => attachment.id !== attachmentId)
+        }))
+      })));
+    } catch (err) {
+      console.error('Error deleting comment attachment:', err);
+      throw err;
+    }
+  };
+
+  const contextValue = {
+    tasks,
+    users,
+    projects,
+    customers,
+    categories,
+    teams,
+    taskStatuses,
+    loading,
+    error,
+    updateTask,
+    deleteTask,
+    addTask,
+    updateSubtask,
+    addSubtask,
+    addComment,
+    updateComment,
+    deleteComment,
+    addAttachment,
+    deleteAttachment,
+    addCommentAttachment,
+    deleteCommentAttachment,
+    refreshData: fetchData,
+  };
+
+  return (
+    <TaskContext.Provider value={contextValue}>
+      {children}
+    </TaskContext.Provider>
+  );
+}
+
+export function useTaskContext(): TaskContextType {
+  const context = useContext(TaskContext);
+  if (context === undefined) {
+    throw new Error('useTaskContext must be used within a TaskProvider');
+  }
+  return context;
+}

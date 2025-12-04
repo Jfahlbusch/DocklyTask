@@ -1,0 +1,487 @@
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 2408ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 140ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 143ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 87ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 92ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 87ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 103ms
+ ○ Compiling /api/auth/[...nextauth] ...
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 2772ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 563ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 860ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 1984ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 179ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 230ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 260ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 308ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 118ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 181ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 154ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 147ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 187ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 163ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 124ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 189ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 125ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 137ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 211ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 115ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 141ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 848ms (3639 modules)
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 2042ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 123ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 149ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 115ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 100ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 94ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 79ms
+ ✓ Compiled /api/auth/[...nextauth] in 12.8s (6710 modules)
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+ GET /api/auth/session 200 in 7570ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ POST /api/auth/_log 200 in 94ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 461ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 410ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 149ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 179ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 262ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 295ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 210ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 229ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 246ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 424ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 4000ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 481ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 611ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 1248ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+ POST /api/auth/_log 200 in 258ms
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 320ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 590ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 1540ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 4.2s (3706 modules)
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 6772ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 180ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 218ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 949ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 125ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 111ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 252ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 120ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 285ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 196ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 257ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 284ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 184ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 117ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 160ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 128ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 1010ms (3702 modules)
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 1829ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 309ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 16325ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 599ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 1901ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 630ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 130ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 147ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 169ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 136ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 433ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 465ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 2997ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 1835ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 203ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 324ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 155ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 124ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 122ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 114ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 2.5s (3488 modules)
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 3976ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 173ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 653ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 531ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 568ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 921ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 2171ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 6.2s (3710 modules)
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 9670ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 2897ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 1616ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 196ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 153ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 158ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 145ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 155ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 263ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 4.6s (3712 modules)
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 7350ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 10s (3724 modules)
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 11222ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 477ms
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 620ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 2704ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 409ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 114.7s (3708 modules)
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 1317ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 487ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 12.8s (3629 modules)
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 14845ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 160ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+    at async Object.jwt (src/app/api/auth/[...nextauth]/route.ts:530:39)
+[next-auth][debug][CHUNKING_SESSION_COOKIE] {
+ GET /api/auth/session 200 in 2025ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 724ms (3643 modules)
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+ GET /api/auth/session 200 in 1209ms
+ GET /api/auth/providers 200 in 5ms
+ GET /api/auth/csrf 200 in 4ms
+[next-auth][error][SIGNIN_OAUTH_ERROR] 
+https://next-auth.js.org/errors#signin_oauth_error  {
+ POST /api/auth/signin/keycloak 200 in 136ms
+ GET /api/auth/error?error=OAuthSignin 302 in 13ms
+ GET /api/auth/signin?error=OAuthSignin 200 in 4ms
+[next-auth][error][SIGNIN_OAUTH_ERROR] 
+https://next-auth.js.org/errors#signin_oauth_error  {
+ POST /api/auth/signin/keycloak 302 in 67ms
+ GET /api/auth/error?error=OAuthSignin 302 in 9ms
+ GET /api/auth/signin?error=OAuthSignin 200 in 7ms
+[next-auth][error][SIGNIN_OAUTH_ERROR] 
+https://next-auth.js.org/errors#signin_oauth_error  {
+ POST /api/auth/signin/keycloak 302 in 182ms
+ GET /api/auth/error?error=OAuthSignin 302 in 6ms
+ GET /api/auth/signin?error=OAuthSignin 200 in 6ms
+[next-auth][debug][CREATE_STATE] { value: 'zU3FGD8BfO065HaKIYNkHLDmGHOnWmDF5zQZmUJKHlk', maxAge: 900 }
+[next-auth][debug][CREATE_PKCECODEVERIFIER] { value: '7eeB9ryzCMhByy5l2gHSlcXNmsuStw1tpXuxauPUOak', maxAge: 900 }
+[next-auth][debug][GET_AUTHORIZATION_URL] {
+      name: 'next-auth.state',
+      name: 'next-auth.pkce.code_verifier',
+    signinUrl: 'http://localhost:3000/api/auth/signin/keycloak',
+    callbackUrl: 'http://localhost:3000/api/auth/callback/keycloak'
+ POST /api/auth/signin/keycloak 302 in 186ms
+[next-auth][error][OAUTH_CALLBACK_ERROR] 
+https://next-auth.js.org/errors#oauth_callback_error  {
+ GET /api/auth/callback/keycloak?state=zU3FGD8BfO065HaKIYNkHLDmGHOnWmDF5zQZmUJKHlk&session_state=45a9eebd-082f-4545-aa30-ea1a6f126ff6&code=217fe76a-5742-43d9-878b-68be88efdfd9.45a9eebd-082f-4545-aa30-ea1a6f126ff6.796e8aa8-4cea-4d38-9b4f-50352c207d98 302 in 201ms
+ GET /api/auth/error?error=OAuthCallback 302 in 8ms
+ GET /api/auth/signin?error=OAuthCallback 200 in 4ms
+[next-auth][error][SIGNIN_OAUTH_ERROR] 
+https://next-auth.js.org/errors#signin

@@ -1,0 +1,423 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ============================================
+   🎨 LIGHT MODE - Modern Indigo Theme
+   ============================================ */
+:root {
+  /* Größerer Radius für moderne Optik */
+  --radius: 0.75rem;
+  
+  /* Hintergründe - leichter Blau-Stich */
+  --background: oklch(0.985 0.002 260);
+  --foreground: oklch(0.15 0.01 260);
+  
+  /* Cards */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.01 260);
+  
+  /* Popovers */
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.01 260);
+  
+  /* Primary - Lebendiges Indigo */
+  --primary: oklch(0.5 0.2 265);
+  --primary-foreground: oklch(0.98 0 0);
+  
+  /* Secondary */
+  --secondary: oklch(0.96 0.005 260);
+  --secondary-foreground: oklch(0.25 0.02 260);
+  
+  /* Muted */
+  --muted: oklch(0.96 0.005 260);
+  --muted-foreground: oklch(0.5 0.01 260);
+  
+  /* Accent - Leichtes Violet */
+  --accent: oklch(0.94 0.03 280);
+  --accent-foreground: oklch(0.3 0.1 280);
+  
+  /* Destructive */
+  --destructive: oklch(0.577 0.245 27.325);
+  
+  /* Borders & Inputs */
+  --border: oklch(0.9 0.005 260);
+  --input: oklch(0.9 0.005 260);
+  --ring: oklch(0.5 0.2 265);
+  
+  /* Charts - Harmonische Indigo-Palette */
+  --chart-1: oklch(0.5 0.2 265);
+  --chart-2: oklch(0.6 0.15 190);
+  --chart-3: oklch(0.6 0.2 300);
+  --chart-4: oklch(0.75 0.15 80);
+  --chart-5: oklch(0.6 0.2 30);
+  
+  /* Sidebar */
+  --sidebar: oklch(0.99 0.002 260);
+  --sidebar-foreground: oklch(0.2 0.01 260);
+  --sidebar-primary: oklch(0.5 0.2 265);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.95 0.02 270);
+  --sidebar-accent-foreground: oklch(0.3 0.05 270);
+  --sidebar-border: oklch(0.9 0.005 260);
+  --sidebar-ring: oklch(0.5 0.2 265);
+}
+
+/* ============================================
+   🌙 DARK MODE - Midnight Blue Theme
+   ============================================ */
+html.dark,
+.dark {
+  /* Tiefes Blau statt reines Schwarz */
+  --background: oklch(0.14 0.015 260);
+  --foreground: oklch(0.95 0.005 260);
+  
+  /* Cards */
+  --card: oklch(0.18 0.02 260);
+  --card-foreground: oklch(0.95 0.005 260);
+  
+  /* Popovers */
+  --popover: oklch(0.2 0.02 260);
+  --popover-foreground: oklch(0.95 0.005 260);
+  
+  /* Primary - Helleres Indigo für Dark Mode */
+  --primary: oklch(0.7 0.18 265);
+  --primary-foreground: oklch(0.15 0.02 260);
+  
+  /* Secondary */
+  --secondary: oklch(0.25 0.02 260);
+  --secondary-foreground: oklch(0.92 0.005 260);
+  
+  /* Muted */
+  --muted: oklch(0.25 0.02 260);
+  --muted-foreground: oklch(0.65 0.01 260);
+  
+  /* Accent */
+  --accent: oklch(0.28 0.04 280);
+  --accent-foreground: oklch(0.9 0.02 280);
+  
+  /* Destructive */
+  --destructive: oklch(0.65 0.2 25);
+  
+  /* Borders & Inputs */
+  --border: oklch(0.28 0.02 260 / 60%);
+  --input: oklch(0.25 0.015 260 / 70%);
+  --ring: oklch(0.7 0.18 265);
+  
+  /* Charts */
+  --chart-1: oklch(0.7 0.18 265);
+  --chart-2: oklch(0.7 0.15 175);
+  --chart-3: oklch(0.75 0.18 300);
+  --chart-4: oklch(0.8 0.15 85);
+  --chart-5: oklch(0.7 0.2 30);
+  
+  /* Sidebar */
+  --sidebar: oklch(0.16 0.02 260);
+  --sidebar-foreground: oklch(0.92 0.005 260);
+  --sidebar-primary: oklch(0.7 0.18 265);
+  --sidebar-primary-foreground: oklch(0.15 0.02 260);
+  --sidebar-accent: oklch(0.25 0.03 270);
+  --sidebar-accent-foreground: oklch(0.9 0.02 270);
+  --sidebar-border: oklch(0.3 0.02 260 / 50%);
+  --sidebar-ring: oklch(0.7 0.18 265);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  
+  html {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+  
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    min-height: 100vh;
+  }
+  
+  /* Moderne Typografie */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+  
+  h1 {
+    @apply text-4xl font-bold;
+  }
+  
+  h2 {
+    @apply text-2xl font-semibold;
+  }
+  
+  h3 {
+    @apply text-xl font-semibold;
+  }
+}
+
+/* ============================================
+   🎭 NEUE UTILITY KLASSEN
+   (Additiv - überschreibt nichts Bestehendes)
+   ============================================ */
+@layer utilities {
+  /* Gradient Backgrounds */
+  .gradient-primary {
+    background: linear-gradient(135deg, oklch(0.5 0.2 265) 0%, oklch(0.45 0.22 290) 100%);
+  }
+  
+  /* Text Gradient */
+  .text-gradient {
+    background: linear-gradient(135deg, oklch(0.5 0.2 265) 0%, oklch(0.45 0.22 290) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Glow Shadows */
+  .shadow-glow {
+    box-shadow: 0 4px 20px oklch(0.5 0.2 265 / 15%);
+  }
+  .shadow-glow-lg {
+    box-shadow: 0 8px 30px oklch(0.5 0.2 265 / 25%);
+  }
+  
+  .dark .shadow-glow {
+    box-shadow: 0 4px 20px oklch(0.7 0.18 265 / 25%);
+  }
+  .dark .shadow-glow-lg {
+    box-shadow: 0 8px 30px oklch(0.7 0.18 265 / 35%);
+  }
+  
+  /* Glass Effect */
+  .glass {
+    background: oklch(1 0 0 / 70%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .dark .glass {
+    background: oklch(0.18 0.02 260 / 60%);
+  }
+  
+  /* Soft Shadow */
+  .shadow-soft {
+    box-shadow: 
+      0 2px 4px oklch(0 0 0 / 2%),
+      0 4px 8px oklch(0 0 0 / 3%),
+      0 8px 16px oklch(0 0 0 / 4%);
+  }
+  
+  /* Custom Scrollbar */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: oklch(0.7 0 0 / 20%);
+    border-radius: 3px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.6 0 0 / 30%);
+  }
+  
+  /* ============================================
+     🚀 QUICK WINS - Hover & Transform Effects
+     ============================================ */
+  
+  /* Hover Lift Effect */
+  .hover-lift {
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Hover Scale Effect */
+  .hover-scale {
+    transition: transform 0.2s ease-out;
+  }
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
+  
+  /* Hover Glow Effect */
+  .hover-glow {
+    transition: box-shadow 0.2s ease-out;
+  }
+  .hover-glow:hover {
+    box-shadow: 0 8px 30px oklch(0.5 0.2 265 / 15%);
+  }
+  .dark .hover-glow:hover {
+    box-shadow: 0 8px 30px oklch(0.7 0.18 265 / 25%);
+  }
+  
+  /* Interactive Card Effect */
+  .card-interactive {
+    transition: all 0.2s ease-out;
+  }
+  .card-interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 4px 6px oklch(0 0 0 / 3%),
+      0 10px 20px oklch(0 0 0 / 5%),
+      0 0 0 1px oklch(0.5 0.2 265 / 10%);
+  }
+  .dark .card-interactive:hover {
+    box-shadow: 
+      0 4px 6px oklch(0 0 0 / 20%),
+      0 10px 20px oklch(0 0 0 / 30%),
+      0 0 0 1px oklch(0.7 0.18 265 / 20%);
+  }
+  
+  /* Gradient Border Animation */
+  .gradient-border {
+    position: relative;
+    background: var(--card);
+    border-radius: var(--radius);
+  }
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, oklch(0.5 0.2 265 / 30%), oklch(0.45 0.22 290 / 30%));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+  }
+  .gradient-border:hover::before {
+    opacity: 1;
+  }
+  
+  /* Pulse Animation */
+  .animate-pulse-slow {
+    animation: pulse-slow 3s ease-in-out infinite;
+  }
+  
+  /* Shimmer Effect for Loading */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      oklch(0.9 0 0 / 0%) 0%,
+      oklch(0.9 0 0 / 50%) 50%,
+      oklch(0.9 0 0 / 0%) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  .dark .shimmer {
+    background: linear-gradient(
+      90deg,
+      oklch(0.3 0 0 / 0%) 0%,
+      oklch(0.3 0 0 / 50%) 50%,
+      oklch(0.3 0 0 / 0%) 100%
+    );
+    background-size: 200% 100%;
+  }
+  
+  /* Badge Pulse */
+  .badge-pulse::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    animation: badge-pulse 2s ease-in-out infinite;
+  }
+  
+  /* Status Dot Animation */
+  .status-dot {
+    position: relative;
+  }
+  .status-dot::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    background: inherit;
+    opacity: 0.4;
+    animation: status-pulse 2s ease-in-out infinite;
+  }
+}
+
+/* ============================================
+   🎬 KEYFRAME ANIMATIONS
+   ============================================ */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes badge-pulse {
+  0%, 100% { transform: scale(1); opacity: 0; }
+  50% { transform: scale(1.5); opacity: 0.3; }
+}
+
+@keyframes status-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.8); opacity: 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

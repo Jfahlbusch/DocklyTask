@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Debug</title>
+</head>
+<body>
+    <h1>Kanban Debug Information</h1>
+    <div id="debug-info"></div>
+    
+    <script>
+        async function debugKanban() {
+            const debugInfo = document.getElementById('debug-info');
+            
+            try {
+                // Fetch task statuses
+                const statusesResponse = await fetch('/api/task-statuses');
+                const statuses = await statusesResponse.json();
+                
+                // Fetch tasks
+                const tasksResponse = await fetch('/api/tasks');
+                const tasks = await tasksResponse.json();
+                
+                // Debug information
+                let html = '<h2>Task Statuses</h2>';
+                html += '<pre>' + JSON.stringify(statuses, null, 2) + '</pre>';
+                
+                html += '<h2>Tasks</h2>';
+                html += '<pre>' + JSON.stringify(tasks.slice(0, 2), null, 2) + '</pre>';
+                
+                html += '<h2>Task-Status Mapping Analysis</h2>';
+                html += '<table border="1">';
+                html += '<tr><th>Task ID</th><th>Task Title</th><th>Task Status ID</th><th>Task Status Name</th><th>Matching Status ID</th><th>Match Found</th></tr>';
+                
+                tasks.forEach(task => {
+                    const matchingStatus = statuses.find(s => s.id === task.statusId);
+                    const matchFound = matchingStatus ? 'YES' : 'NO';
+                    html += `<tr>
+                        <td>${task.id}</td>
+                        <td>${task.title}</td>
+                        <td>${task.statusId}</td>
+                        <td>${task.status}</td>
+                        <td>${matchingStatus ? matchingStatus.id : 'N/A'}</td>
+                        <td style="color: ${matchFound === 'YES' ? 'green' : 'red'}">${matchFound}</td>
+                    </tr>`;
+                });
+                
+                html += '</table>';
+                
+                debugInfo.innerHTML = html;
+                
+            } catch (error) {
+                debugInfo.innerHTML = '<p style="color: red;">Error: ' + error.message + '</p>';
+            }
+        }
+        
+        debugKanban();
+    </script>
+</body>
+</html>

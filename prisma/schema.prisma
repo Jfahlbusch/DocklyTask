@@ -1,0 +1,727 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User model with roles and authentication
+model User {
+  id          String   @id @default(cuid())
+  email       String
+  name        String?
+  phone       String?
+  avatar      String?
+  role        UserRole @default(USER)
+  customerId  String?
+  tenantId    String   @default("default")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  assignedTasks    Task[] @relation("TaskAssignee")
+  createdTasks     Task[] @relation("TaskCreator")
+  assignedSubTasks SubTask[] @relation("SubTaskAssignee")
+  assignedTemplateTasks TemplateTask[] @relation("TemplateTaskAssignee")
+  customer         Customer? @relation(fields: [customerId], references: [id])
+  projectAssignees ProjectAssignee[]
+  comments         TaskComment[]
+  chatMessages     TaskChatMessage[]
+  customerChatMessages TaskCustomerChatMessage[]
+  teamMemberships   TeamMember[]
+  
+  @@unique([email, tenantId])
+  @@index([tenantId])
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  USER
+  VIEWER
+}
+
+// Customer model
+model Customer {
+  id           String   @id @default(cuid())
+  name         String
+  tenantId     String   @default("default")
+  mainContact  String?
+  info         String?
+  
+  // Address fields (for Pipedrive sync)
+  street       String?
+  city         String?
+  postalCode   String?
+  country      String?
+  
+  // External IDs for sync
+  pipedriveId       BigInt?
+  pipedriveSyncedAt DateTime?
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  users     User[]
+  projects  Project[]
+  tasks     Task[]
+  contacts  Contact[]
+  
+  @@index([tenantId])
+  @@index([pipedriveId])
+  @@map("customers")
+}
+
+// Product model
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  icon        String?
+  tenantId    String   @default("default")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  projectProducts      ProjectProduct[]
+  templateProducts     TemplateProduct[]
+  taskProducts         TaskProduct[]
+  templateTaskProducts TemplateTaskProduct[]
+  
+  @@index([tenantId])
+  @@map("products")
+}
+
+// Category model
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  color     String?
+  tenantId  String   @default("default")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  tasks         Task[]
+  templateTasks TemplateTask[] @relation("TemplateTaskCategory")
+  
+  @@unique([name, tenantId])
+  @@index([tenantId])
+  @@map("categories")
+}
+
+// Project model
+model Project {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  status      ProjectStatus @default(PLANNING)
+  goLiveDate  DateTime?
+  customerId  String
+  tenantId    String      @default("default")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  customer     Customer         @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  tasks        Task[]
+  assignees    ProjectAssignee[]
+  products     ProjectProduct[]
+  templates    ProjectTemplate[] @relation("ProjectTemplates")
+  
+  @@index([tenantId])
+  @@map("projects")
+}
+
+enum ProjectStatus {
+  PLANNING
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+// Project-User many-to-many relationship
+model ProjectAssignee {
+  id        String   @id @default(cuid())
+  projectId String
+  userId    String
+  role      String?  @default("member")
+  createdAt DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@map("project_assignees")
+}
+
+// Project-Product many-to-many relationship
+model ProjectProduct {
+  id        String   @id @default(cuid())
+  projectId String
+  productId String
+  createdAt DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, productId])
+  @@map("project_products")
+}
+
+// Task-Product many-to-many relationship
+model TaskProduct {
+  id        String   @id @default(cuid())
+  taskId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  task    Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, productId])
+  @@map("task_products")
+}
+
+// Task model
+model Task {
+  id          String     @id @default(cuid())
+  taskNumber  Int?       @unique // Fortlaufende Nummer (optional für Migration)
+  title       String
+  description String?
+  status      String     @default("PENDING")
+  statusId    String?
+  priority    TaskPriority @default(MEDIUM)
+  startDate   DateTime?
+  dueDate     DateTime?
+  customerId  String?
+  projectId   String?
+  categoryId  String?
+  assigneeId  String?
+  teamId      String?
+  isCustomerVisible Boolean @default(false)
+  createdById String
+  tenantId    String     @default("default")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  customer   Customer?  @relation(fields: [customerId], references: [id])
+  project    Project?   @relation(fields: [projectId], references: [id])
+  category   Category?  @relation(fields: [categoryId], references: [id])
+  assignee   User?      @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  team       Team?      @relation(fields: [teamId], references: [id])
+  createdBy  User       @relation("TaskCreator", fields: [createdById], references: [id])
+  taskStatus TaskStatus? @relation(fields: [statusId], references: [id])
+  subtasks   SubTask[]
+  attachments TaskAttachment[]
+  comments   TaskComment[]
+  chatMessages TaskChatMessage[]
+  customerChatMessages TaskCustomerChatMessage[]
+  products   TaskProduct[]
+  customFieldValues TaskCustomFieldValue[]
+  
+  @@index([tenantId])
+  @@map("tasks")
+}
+
+// Task Status model for dynamic status management
+model TaskStatus {
+  id          String   @id @default(cuid())
+  name        String
+  label       String
+  description String?
+  color       String   @default("bg-gray-100 text-gray-800")
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  tenantId    String   @default("default")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  tasks         Task[]
+  templateTasks TemplateTask[] @relation("TemplateTaskStatus")
+  
+  @@unique([name, tenantId])
+  @@index([tenantId])
+  @@map("task_statuses")
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+// SubTask model
+model SubTask {
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  priority    TaskPriority @default(MEDIUM)
+  status      String       @default("PENDING")
+  assigneeId  String?
+  teamId      String?
+  taskId      String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  task      Task       @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  assignee  User?      @relation("SubTaskAssignee", fields: [assigneeId], references: [id])
+  team      Team?      @relation(fields: [teamId], references: [id])
+  
+  @@map("sub_tasks")
+}
+
+// Task Attachment model
+model TaskAttachment {
+  id        String   @id @default(cuid())
+  fileName  String
+  fileSize  Int?
+  fileType  String?
+  fileUrl   String
+  taskId    String
+  createdAt DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  
+  @@map("task_attachments")
+}
+
+// Task Comment model
+model TaskComment {
+  id        String   @id @default(cuid())
+  content   String
+  taskId    String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+  attachments CommentAttachment[]
+  
+  @@map("task_comments")
+}
+
+// Task Chat Message model (separate from TaskComment)
+model TaskChatMessage {
+  id        String   @id @default(cuid())
+  content   String
+  taskId    String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("task_chat_messages")
+}
+
+// Task Customer Chat Message model (separate from TaskChatMessage)
+model TaskCustomerChatMessage {
+  id        String   @id @default(cuid())
+  content   String
+  taskId    String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("task_customer_chat_messages")
+}
+
+// Comment Attachment model
+model CommentAttachment {
+  id        String   @id @default(cuid())
+  fileName  String
+  fileSize  Int?
+  fileType  String?
+  fileUrl   String
+  commentId String
+  createdAt DateTime @default(now())
+
+  comment TaskComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  
+  @@map("comment_attachments")
+}
+
+// Project Template model
+model ProjectTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  tenantId    String   @default("default")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  products TemplateProduct[]
+  tasks    TemplateTask[]
+  projects Project[] @relation("ProjectTemplates")
+  
+  @@index([tenantId])
+  @@map("project_templates")
+}
+
+// Template-Product many-to-many relationship
+model TemplateProduct {
+  id           String   @id @default(cuid())
+  templateId   String
+  productId    String
+  createdAt    DateTime @default(now())
+
+  template ProjectTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  product  Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([templateId, productId])
+  @@map("template_products")
+}
+
+// Template Task model - Enthält alle Felder wie eine echte Task
+model TemplateTask {
+  id           String     @id @default(cuid())
+  title        String
+  description  String?
+  priority     TaskPriority @default(MEDIUM)
+  templateId   String
+  parentTaskId String?
+  
+  // Felder wie bei echten Tasks
+  statusId     String?    // Optional: Vorgeschlagener Status
+  categoryId   String?    // Optional: Vorgeschlagene Kategorie
+  assigneeId   String?    // Optional: Vorgeschlagener Bearbeiter
+  teamId       String?    // Optional: Vorgeschlagenes Team
+  startDate    DateTime?  // Optional: Geplantes Startdatum (kann bei Projekterstellung angepasst werden)
+  dueDate      DateTime?  // Optional: Geplantes Fälligkeitsdatum
+  isCustomerVisible Boolean @default(false)
+  
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  // Relations
+  template    ProjectTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  parentTask  TemplateTask?   @relation("TemplateTaskSubtasks", fields: [parentTaskId], references: [id])
+  subtasks    TemplateTask[] @relation("TemplateTaskSubtasks")
+  assignee    User?       @relation("TemplateTaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  team        Team?       @relation("TemplateTaskTeam", fields: [teamId], references: [id], onDelete: SetNull)
+  status      TaskStatus? @relation("TemplateTaskStatus", fields: [statusId], references: [id], onDelete: SetNull)
+  category    Category?   @relation("TemplateTaskCategory", fields: [categoryId], references: [id], onDelete: SetNull)
+  products    TemplateTaskProduct[]
+  
+  @@map("template_tasks")
+}
+
+// TemplateTask-Product many-to-many relationship
+model TemplateTaskProduct {
+  id              String       @id @default(cuid())
+  templateTaskId  String
+  productId       String
+  createdAt       DateTime     @default(now())
+
+  templateTask    TemplateTask @relation(fields: [templateTaskId], references: [id], onDelete: Cascade)
+  product         Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([templateTaskId, productId])
+  @@map("template_task_products")
+}
+
+// Team model
+model Team {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  color       String?  @default("#3b82f6")
+  tenantId    String   @default("default")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  members       TeamMember[]
+  tasks         Task[]
+  subtasks      SubTask[]
+  templateTasks TemplateTask[] @relation("TemplateTaskTeam")
+  
+  @@unique([name, tenantId])
+  @@index([tenantId])
+  @@map("teams")
+}
+
+// Team-User many-to-many relationship
+model TeamMember {
+  id        String   @id @default(cuid())
+  teamId    String
+  userId    String
+  role      String?  @default("member")
+  createdAt DateTime @default(now())
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@map("team_members")
+}
+
+// Role Permission model for access control
+model RolePermission {
+  id        String   @id @default(cuid())
+  role      UserRole
+  resource  String
+  canRead   Boolean  @default(true)
+  canWrite  Boolean  @default(false)
+  canDelete Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([role, resource])
+  @@map("role_permissions")
+}
+
+// App Configuration model
+model AppConfiguration {
+  id              String   @id @default(cuid())
+  appName         String   @default("TaskWise")
+  appLogo         String?
+  appFavicon      String?
+  primaryColor    String   @default("#3b82f6")
+  secondaryColor  String   @default("#64748b")
+  mode            AppMode  @default(DEMO)
+  tenantId        String   @default("default")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@unique([tenantId])
+  @@index([tenantId])
+  @@map("app_configurations")
+}
+
+enum AppMode {
+  DEMO
+  PRODUCTIVE
+}
+
+// Task Field Configuration - defines which fields are visible/required in task forms
+// Task Field Section - Groups fields visually in the form
+model TaskFieldSection {
+  id          String   @id @default(cuid())
+  name        String   // Section name/title
+  description String?  // Optional description
+  isCollapsed Boolean  @default(false) // Whether section starts collapsed
+  position    Int      @default(0)     // Order of sections
+  tenantId    String   @default("default")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  fields      TaskFieldConfig[]
+
+  @@index([tenantId])
+  @@map("task_field_sections")
+}
+
+model TaskFieldConfig {
+  id              String    @id @default(cuid())
+  fieldKey        String    // Internal field identifier (e.g., "title", "description", "priority", "customField1")
+  label           String    // Display name
+  fieldType       FieldType @default(TEXT)
+  isRequired      Boolean   @default(false)
+  isVisible       Boolean   @default(true)
+  visibleForRoles String?   // JSON array of roles that can see this field, e.g. ["ADMIN", "MANAGER"]. Null = all roles
+  isSystem        Boolean   @default(false) // System fields can't be deleted
+  isArchived      Boolean   @default(false) // Archived fields are hidden but not deleted
+  position        Int       @default(0)     // Order in form
+  width           Int       @default(100)   // Width in percent (100 = full row, 50 = half, 33 = third)
+  placeholder     String?
+  defaultValue    String?
+  options         String?   // JSON array for SELECT/MULTISELECT options
+  sectionId       String?   // Optional section grouping
+  tenantId        String    @default("default")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  section      TaskFieldSection? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+  values       TaskCustomFieldValue[]
+
+  @@unique([fieldKey, tenantId])
+  @@index([tenantId])
+  @@index([sectionId])
+  @@map("task_field_configs")
+}
+
+enum FieldType {
+  TEXT
+  TEXTAREA
+  RICHTEXT
+  NUMBER
+  DATE
+  DATETIME
+  SELECT
+  MULTISELECT
+  CHECKBOX
+  USER
+  CUSTOMER
+  PROJECT
+  TEAM
+  CATEGORY
+  PRODUCT
+}
+
+// Custom field values for tasks
+model TaskCustomFieldValue {
+  id        String   @id @default(cuid())
+  taskId    String
+  fieldId   String
+  value     String?  // Stored as string, parsed based on field type
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task      Task            @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  field     TaskFieldConfig @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, fieldId])
+  @@map("task_custom_field_values")
+}
+
+// =====================================
+// INTEGRATION MODELS
+// =====================================
+
+// Integration Configuration - stores API credentials for integrations (admin-configurable)
+model IntegrationConfig {
+  id              String   @id @default(cuid())
+  tenantId        String   @default("default")
+  integrationType String   // 'pipedrive', 'salesforce', 'hubspot'
+  
+  // OAuth/API Credentials
+  clientId        String?
+  clientSecret    String?
+  redirectUri     String?
+  
+  // Additional config (JSON)
+  additionalConfig String  @default("{}")
+  
+  isEnabled       Boolean  @default(false)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@unique([tenantId, integrationType])
+  @@index([tenantId])
+  @@map("integration_configs")
+}
+
+// Integration Connection - stores OAuth credentials and sync state for external integrations
+model IntegrationConnection {
+  id              String   @id @default(cuid())
+  tenantId        String   @default("default")
+  
+  // Integration Type (extensible for future integrations)
+  integrationType String   // 'pipedrive', 'salesforce', 'hubspot'
+  
+  // OAuth Credentials (should be encrypted in production!)
+  accessToken     String
+  refreshToken    String
+  tokenExpiresAt  DateTime
+  
+  // Integration-specific data
+  apiDomain       String?  // e.g. "https://company.pipedrive.com"
+  companyId       String?  // External company/account ID
+  companyName     String?
+  
+  // Sync Status
+  isActive        Boolean  @default(true)
+  lastSyncAt      DateTime?
+  lastSyncStatus  String?  // 'success', 'partial', 'failed'
+  lastSyncError   String?
+  
+  // Field Mapping Configuration (JSON)
+  fieldMapping    String   @default("{}")
+  
+  // Sync Configuration (JSON)
+  syncConfig      String   @default("{}")
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relations
+  syncLogs        IntegrationSyncLog[]
+  
+  @@unique([tenantId, integrationType])
+  @@index([tenantId])
+  @@map("integration_connections")
+}
+
+// Integration Sync Log - tracks sync operations
+model IntegrationSyncLog {
+  id              String   @id @default(cuid())
+  connectionId    String
+  
+  syncType        String   // 'full', 'incremental', 'manual'
+  startedAt       DateTime @default(now())
+  completedAt     DateTime?
+  
+  status          String   // 'running', 'success', 'partial', 'failed'
+  
+  // Statistics
+  organizationsFetched  Int @default(0)
+  organizationsCreated  Int @default(0)
+  organizationsUpdated  Int @default(0)
+  personsFetched        Int @default(0)
+  personsCreated        Int @default(0)
+  personsUpdated        Int @default(0)
+  
+  // Error details (JSON array)
+  errors          String   @default("[]")
+  
+  createdAt       DateTime @default(now())
+  
+  connection      IntegrationConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  
+  @@index([connectionId])
+  @@map("integration_sync_logs")
+}
+
+// Contact/Person model - for synced contacts from integrations
+model Contact {
+  id              String   @id @default(cuid())
+  customerId      String
+  tenantId        String   @default("default")
+  
+  // Basic info
+  firstName       String?
+  lastName        String?
+  name            String
+  email           String?
+  phone           String?
+  position        String?  // Job title
+  
+  // External IDs for sync
+  pipedriveId     BigInt?
+  pipedriveSyncedAt DateTime?
+  
+  // Additional data (JSON)
+  metadata        String   @default("{}")
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  @@index([customerId])
+  @@index([tenantId])
+  @@index([pipedriveId])
+  @@map("contacts")
+}

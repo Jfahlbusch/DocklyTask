@@ -1,0 +1,83 @@
+'use client';
+
+import { useTaskContext } from '@/hooks/useTaskContext';
+import Dashboard from '@/components/Dashboard';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Plus, Loader2 } from 'lucide-react';
+
+export default function Home() {
+  const {
+    tasks,
+    users,
+    projects,
+    customers,
+    categories,
+    loading,
+    error,
+    updateTask,
+    deleteTask,
+  } = useTaskContext();
+
+  const handleTaskEdit = (task: any) => {
+    // TODO: Implement task edit dialog
+    console.log('Edit task:', task);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p>Lade Aufgaben...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Card className="w-full max-w-md">
+          <CardContent className="p-6">
+            <div className="text-center">
+              <h2 className="text-lg font-semibold text-red-600 mb-2">Fehler</h2>
+              <p className="text-gray-600 mb-4">{error}</p>
+              <Button onClick={() => window.location.reload()}>
+                Erneut versuchen
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-bold">TaskWise Dashboard</h1>
+          <p className="text-gray-600 mt-1">
+            Willkommen zurück! Hier sind Ihre aktuellen Aufgaben.
+          </p>
+        </div>
+        <Button>
+          <Plus className="h-4 w-4 mr-2" />
+          Neue Aufgabe
+        </Button>
+      </div>
+
+      <Dashboard
+        tasks={tasks}
+        users={users}
+        projects={projects}
+        customers={customers}
+        categories={categories}
+        onTaskUpdate={updateTask}
+        onTaskDelete={deleteTask}
+        onTaskEdit={handleTaskEdit}
+      />
+    </div>
+  );
+}
