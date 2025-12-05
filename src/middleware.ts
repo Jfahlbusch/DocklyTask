@@ -14,8 +14,10 @@ function getTenantFromRequest(req: NextRequest): string {
 
 export async function middleware(req: NextRequest) {
 	const { pathname } = req.nextUrl;
-	// Ungeschützte Routen erlauben
+	
+	// Statische Dateien und Assets ignorieren
 	if (
+		pathname.includes('.') || // Dateien mit Extension (favicon.ico, etc.)
 		pathname.startsWith('/api/auth') ||
 		pathname.startsWith('/_next') ||
 		pathname.startsWith('/public') ||
@@ -31,7 +33,10 @@ export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   if (!token) {
     const loginUrl = new URL('/api/auth/signin/keycloak', req.url);
-    loginUrl.searchParams.set('callbackUrl', req.nextUrl.pathname + req.nextUrl.search);
+    // Nur valide Seiten als Callback verwenden, nicht statische Dateien
+    const callbackPath = req.nextUrl.pathname + req.nextUrl.search;
+    const validCallback = !callbackPath.includes('.') && !callbackPath.startsWith('/api/');
+    loginUrl.searchParams.set('callbackUrl', validCallback ? callbackPath : '/');
     return NextResponse.redirect(loginUrl);
   }
 

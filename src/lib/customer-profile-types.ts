@@ -153,6 +153,11 @@ export const DEFAULT_CUSTOMER_PROFILE_FIELDS: FieldDef[] = [
   { id: 'df_firm', key: 'firm', label: 'Firmierung', type: 'text' },
   { id: 'df_main', key: 'mainContactDetails', label: 'Ansprechpartner (Hauptkontakt)', type: 'textarea' },
   { id: 'df_pm', key: 'accountManager', label: 'PM / Kundenberater', type: 'text' },
+  // Adressfelder (werden von Pipedrive synchronisiert)
+  { id: 'df_street', key: 'street', label: 'Straße', type: 'text', sectionId: 'sec_general' },
+  { id: 'df_postalCode', key: 'postalCode', label: 'PLZ', type: 'text', sectionId: 'sec_general' },
+  { id: 'df_city', key: 'city', label: 'Stadt', type: 'text', sectionId: 'sec_general' },
+  { id: 'df_country_addr', key: 'country', label: 'Land', type: 'text', sectionId: 'sec_general' },
   { id: 'df_erp', key: 'erp', label: 'Warenwirtschaft', type: 'text' },
   { id: 'df_branches', key: 'branchCount', label: 'Anzahl Filialen', type: 'number' },
   { id: 'df_initial', key: 'initialBranches', label: 'Startfilialen', type: 'text' },

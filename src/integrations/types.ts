@@ -35,10 +35,49 @@ export interface IntegrationConnection {
   updatedAt: Date;
 }
 
+/**
+ * Einfaches Mapping: Ein Pipedrive-Feld -> Ein App-Feld
+ */
+export type SimpleFieldMapping = Record<string, string>; // External key -> App field
+
+/**
+ * Zusammengesetztes Feld-Mapping: Mehrere Pipedrive-Felder -> Ein App-Feld
+ * Ermöglicht z.B. Straßenname + Hausnummer zu kombinieren
+ */
+export interface CompositeFieldEntry {
+  /** Das Zielfeld in der App */
+  appField: string;
+  /** Pipedrive-Quellfelder mit Reihenfolge */
+  sourceFields: {
+    /** Pipedrive-Feld-Schlüssel */
+    key: string;
+    /** Reihenfolge (0 = erstes) */
+    order: number;
+  }[];
+  /** Trennzeichen zwischen den Werten (default: " ") */
+  separator?: string;
+}
+
+/**
+ * Erweiterte Feld-Zuordnung die sowohl einfache als auch zusammengesetzte Mappings unterstützt
+ */
+export interface AdvancedFieldMapping {
+  /** Einfache 1:1 Mappings (Pipedrive-Key -> App-Feld) */
+  simple: SimpleFieldMapping;
+  /** Zusammengesetzte Mappings (mehrere Pipedrive-Felder -> ein App-Feld) */
+  composite: CompositeFieldEntry[];
+}
+
 export interface SyncConfig {
   syncCustomFields: boolean;
+  /** @deprecated Verwende advancedFieldMapping für neue Implementierungen */
   customFieldMapping: Record<string, string>; // External key -> App field (for organizations/customers)
+  /** @deprecated Verwende advancedPersonFieldMapping für neue Implementierungen */
   personFieldMapping: Record<string, string>; // External key -> App field (for persons/contacts)
+  /** Erweitertes Feld-Mapping für Organisationen (unterstützt zusammengesetzte Felder) */
+  advancedFieldMapping?: AdvancedFieldMapping;
+  /** Erweitertes Feld-Mapping für Personen (unterstützt zusammengesetzte Felder) */
+  advancedPersonFieldMapping?: AdvancedFieldMapping;
   syncPersons: boolean;
   incrementalSync: boolean;
   autoSyncEnabled: boolean;

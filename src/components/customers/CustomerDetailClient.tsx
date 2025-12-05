@@ -314,11 +314,26 @@ export default function CustomerDetailClient({ customerId }: CustomerDetailClien
               <AccordionContent>
                 {/* Dynamischer Kundensteckbrief basierend auf Schema */}
                 {profileSchema.length > 0 ? (
-                  <CustomerProfileRenderer 
-                    customer={customer} 
-                    schema={profileSchema}
-                    columns={2}
-                  />
+                  <>
+                    {/* Adressblock - immer anzeigen wenn Adressdaten vorhanden */}
+                    {(customer.street || customer.city || customer.postalCode || customer.country) && (
+                      <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 className="text-sm font-medium text-gray-600 mb-2">Adresse</h4>
+                        <div className="text-gray-700">
+                          {customer.street && <p>{customer.street}</p>}
+                          {(customer.postalCode || customer.city) && (
+                            <p>{[customer.postalCode, customer.city].filter(Boolean).join(' ')}</p>
+                          )}
+                          {customer.country && <p>{customer.country}</p>}
+                        </div>
+                      </div>
+                    )}
+                    <CustomerProfileRenderer 
+                      customer={customer} 
+                      schema={profileSchema}
+                      columns={2}
+                    />
+                  </>
                 ) : (
                   /* Fallback: Statische Darstellung wenn kein Schema konfiguriert */
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -327,6 +342,19 @@ export default function CustomerDetailClient({ customerId }: CustomerDetailClien
                         <label className="text-sm font-medium text-gray-600">Firmierung</label>
                         <p className="text-lg font-semibold">{customer.name}</p>
                       </div>
+                      {/* Adresse - aus Pipedrive synchronisiert */}
+                      {(customer.street || customer.city || customer.postalCode || customer.country) && (
+                        <div className="p-3 bg-gray-50 rounded-lg">
+                          <label className="text-sm font-medium text-gray-600">Adresse</label>
+                          <div className="text-gray-700 mt-1">
+                            {customer.street && <p>{customer.street}</p>}
+                            {(customer.postalCode || customer.city) && (
+                              <p>{[customer.postalCode, customer.city].filter(Boolean).join(' ')}</p>
+                            )}
+                            {customer.country && <p>{customer.country}</p>}
+                          </div>
+                        </div>
+                      )}
                       <div>
                         <label className="text-sm font-medium text-gray-600">Ansprechpartner (Hauptkontakt)</label>
                         <p className="text-gray-700 break-words">

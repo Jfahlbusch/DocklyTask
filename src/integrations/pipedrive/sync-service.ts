@@ -17,6 +17,8 @@ import {
   PipedrivePersonField,
   SyncConfig,
   DEFAULT_SYNC_CONFIG,
+  AdvancedFieldMapping,
+  CompositeFieldEntry,
 } from '../types';
 
 export class PipedriveSyncService {
@@ -356,7 +358,7 @@ export class PipedriveSyncService {
     }
 
     // Map custom fields if enabled
-    if (this.syncConfig.syncCustomFields && this.syncConfig.customFieldMapping) {
+    if (this.syncConfig.syncCustomFields && (this.syncConfig.customFieldMapping || this.syncConfig.advancedFieldMapping)) {
       // Start with existing profile data to preserve manually entered fields
       let profileData: Record<string, unknown> = {};
       if (existingInfo) {
@@ -372,7 +374,8 @@ export class PipedriveSyncService {
       // or directly on the organization object (API v1 style)
       const customFieldsObj = (org as { custom_fields?: Record<string, unknown> }).custom_fields || {};
       
-      for (const [pipedriveKey, appField] of Object.entries(this.syncConfig.customFieldMapping)) {
+      // Helper function to get field value from organization
+      const getFieldValue = (pipedriveKey: string): unknown => {
         // Try to get value from: 1) custom_fields object (v2), 2) direct property (v1), 3) address sub-object
         let fieldValue = customFieldsObj[pipedriveKey] ?? org[pipedriveKey];
         
@@ -384,35 +387,74 @@ export class PipedriveSyncService {
           const addressKey = pipedriveKey.replace('address_', '') as keyof typeof org.address;
           fieldValue = org.address?.[addressKey];
         }
+        return fieldValue;
+      };
+      
+      // Helper function to set value on customer or profileData
+      const setMappedValue = (appField: string, value: unknown) => {
+        if (appField.startsWith('profile.')) {
+          // Profile field - store in nested structure
+          const profileKey = appField.replace('profile.', '');
+          this.setNestedValue(profileData, profileKey, value);
+        } else if (appField === 'mainContact') {
+          customer.mainContact = String(value);
+        } else if (appField === 'street') {
+          customer.street = String(value);
+        } else if (appField === 'city') {
+          customer.city = String(value);
+        } else if (appField === 'postalCode') {
+          customer.postalCode = String(value);
+        } else if (appField === 'country') {
+          customer.country = String(value);
+        } else if (appField === 'info') {
+          // Direct info field - store in profile
+          profileData[appField] = value;
+        } else {
+          // Unknown field - store in profile
+          profileData[appField] = value;
+        }
+      };
+      
+      // Process simple field mappings (legacy and new)
+      const simpleMapping = this.syncConfig.advancedFieldMapping?.simple || this.syncConfig.customFieldMapping || {};
+      
+      for (const [pipedriveKey, appField] of Object.entries(simpleMapping)) {
+        const fieldValue = getFieldValue(pipedriveKey);
         
         if (fieldValue !== undefined && fieldValue !== null) {
           const field = fieldSchema.find(f => f.key === pipedriveKey);
           const transformedValue = this.transformFieldValue(fieldValue, field);
           
           console.log(`[Sync] Mapping field: ${pipedriveKey} -> ${appField}, value:`, transformedValue);
-          
-          // Check if it's a direct field or a profile field
-          if (appField.startsWith('profile.')) {
-            // Profile field - store in nested structure
-            const profileKey = appField.replace('profile.', '');
-            this.setNestedValue(profileData, profileKey, transformedValue);
-          } else if (appField === 'mainContact') {
-            customer.mainContact = String(transformedValue);
-          } else if (appField === 'street') {
-            customer.street = String(transformedValue);
-          } else if (appField === 'city') {
-            customer.city = String(transformedValue);
-          } else if (appField === 'postalCode') {
-            customer.postalCode = String(transformedValue);
-          } else if (appField === 'country') {
-            customer.country = String(transformedValue);
-          } else if (appField === 'info') {
-            // Direct info field - store in profile
-            profileData[appField] = transformedValue;
-          } else {
-            // Unknown field - store in profile
-            profileData[appField] = transformedValue;
+          setMappedValue(appField, transformedValue);
+        }
+      }
+      
+      // Process composite field mappings (new feature: multiple fields -> one field)
+      const compositeMapping = this.syncConfig.advancedFieldMapping?.composite || [];
+      
+      for (const composite of compositeMapping) {
+        // Sort source fields by order
+        const sortedSourceFields = [...composite.sourceFields].sort((a, b) => a.order - b.order);
+        
+        // Collect values from all source fields
+        const values: string[] = [];
+        for (const source of sortedSourceFields) {
+          const fieldValue = getFieldValue(source.key);
+          if (fieldValue !== undefined && fieldValue !== null && fieldValue !== '') {
+            const field = fieldSchema.find(f => f.key === source.key);
+            const transformedValue = this.transformFieldValue(fieldValue, field);
+            values.push(String(transformedValue));
           }
+        }
+        
+        // Combine values with separator
+        if (values.length > 0) {
+          const separator = composite.separator ?? ' ';
+          const combinedValue = values.join(separator);
+          
+          console.log(`[Sync] Composite mapping: [${sortedSourceFields.map(s => s.key).join(', ')}] -> ${composite.appField}, value:`, combinedValue);
+          setMappedValue(composite.appField, combinedValue);
         }
       }
 

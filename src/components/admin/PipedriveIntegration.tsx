@@ -53,12 +53,16 @@ import {
   Pause,
   ChevronDown,
   ChevronRight,
+  ChevronUp,
   Mail,
   Phone,
   MapPin,
   User,
   Plus,
   RefreshCcw,
+  Trash2,
+  GripVertical,
+  Combine,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow, format } from 'date-fns';
@@ -81,9 +85,25 @@ interface IntegrationConfig {
   defaultRedirectUri?: string;
 }
 
+interface CompositeFieldEntry {
+  appField: string;
+  sourceFields: {
+    key: string;
+    order: number;
+  }[];
+  separator?: string;
+}
+
+interface AdvancedFieldMapping {
+  simple: Record<string, string>;
+  composite: CompositeFieldEntry[];
+}
+
 interface SyncConfig {
   syncCustomFields: boolean;
   customFieldMapping: Record<string, string>;
+  advancedFieldMapping?: AdvancedFieldMapping;
+  advancedPersonFieldMapping?: AdvancedFieldMapping;
   syncPersons: boolean;
   incrementalSync: boolean;
   autoSyncEnabled: boolean;
@@ -288,9 +308,12 @@ export default function PipedriveIntegration() {
   const [syncHistory, setSyncHistory] = useState<SyncLog[]>([]);
   const [fieldMapping, setFieldMapping] = useState<Record<string, string>>({});
   const [personFieldMapping, setPersonFieldMapping] = useState<Record<string, string>>({});
+  const [compositeFieldMapping, setCompositeFieldMapping] = useState<CompositeFieldEntry[]>([]);
+  const [compositePersonFieldMapping, setCompositePersonFieldMapping] = useState<CompositeFieldEntry[]>([]);
   const [isSyncing, setIsSyncing] = useState(false);
   const [showFieldMapping, setShowFieldMapping] = useState(false);
   const [fieldMappingTab, setFieldMappingTab] = useState<'organizations' | 'persons'>('organizations');
+  const [fieldMappingMode, setFieldMappingMode] = useState<'simple' | 'composite'>('simple');
   
   // Sync Details State
   const [expandedSyncId, setExpandedSyncId] = useState<string | null>(null);
@@ -349,8 +372,12 @@ export default function PipedriveIntegration() {
         const mappingRes = await fetch('/api/integrations/pipedrive/field-mapping');
         if (mappingRes.ok) {
           const mappingData = await mappingRes.json();
-          setFieldMapping(mappingData.organizationMapping || mappingData.mapping || {});
-          setPersonFieldMapping(mappingData.personMapping || {});
+          // Simple mappings
+          setFieldMapping(mappingData.advancedMapping?.simple || mappingData.organizationMapping || mappingData.mapping || {});
+          setPersonFieldMapping(mappingData.advancedPersonMapping?.simple || mappingData.personMapping || {});
+          // Composite mappings
+          setCompositeFieldMapping(mappingData.advancedMapping?.composite || []);
+          setCompositePersonFieldMapping(mappingData.advancedPersonMapping?.composite || []);
         }
 
         // Fetch Pipedrive fields
@@ -534,6 +561,14 @@ export default function PipedriveIntegration() {
         body: JSON.stringify({ 
           organizationMapping: fieldMapping,
           personMapping: personFieldMapping,
+          advancedMapping: {
+            simple: fieldMapping,
+            composite: compositeFieldMapping,
+          },
+          advancedPersonMapping: {
+            simple: personFieldMapping,
+            composite: compositePersonFieldMapping,
+          },
         }),
       });
 
@@ -554,6 +589,113 @@ export default function PipedriveIntegration() {
         variant: 'destructive',
       });
     }
+  };
+
+  // Add a new composite field mapping
+  const handleAddCompositeMapping = (isOrganization: boolean) => {
+    const newEntry: CompositeFieldEntry = {
+      appField: '',
+      sourceFields: [],
+      separator: ' ',
+    };
+    
+    if (isOrganization) {
+      setCompositeFieldMapping([...compositeFieldMapping, newEntry]);
+    } else {
+      setCompositePersonFieldMapping([...compositePersonFieldMapping, newEntry]);
+    }
+  };
+
+  // Update a composite field mapping
+  const handleUpdateCompositeMapping = (
+    index: number, 
+    updates: Partial<CompositeFieldEntry>,
+    isOrganization: boolean
+  ) => {
+    if (isOrganization) {
+      const updated = [...compositeFieldMapping];
+      updated[index] = { ...updated[index], ...updates };
+      setCompositeFieldMapping(updated);
+    } else {
+      const updated = [...compositePersonFieldMapping];
+      updated[index] = { ...updated[index], ...updates };
+      setCompositePersonFieldMapping(updated);
+    }
+  };
+
+  // Remove a composite field mapping
+  const handleRemoveCompositeMapping = (index: number, isOrganization: boolean) => {
+    if (isOrganization) {
+      setCompositeFieldMapping(compositeFieldMapping.filter((_, i) => i !== index));
+    } else {
+      setCompositePersonFieldMapping(compositePersonFieldMapping.filter((_, i) => i !== index));
+    }
+  };
+
+  // Add source field to composite mapping
+  const handleAddSourceField = (compositeIndex: number, pipedriveKey: string, isOrganization: boolean) => {
+    const mapping = isOrganization ? compositeFieldMapping : compositePersonFieldMapping;
+    const composite = mapping[compositeIndex];
+    
+    // Check if already added
+    if (composite.sourceFields.some(sf => sf.key === pipedriveKey)) return;
+    
+    const newSourceField = {
+      key: pipedriveKey,
+      order: composite.sourceFields.length,
+    };
+    
+    handleUpdateCompositeMapping(
+      compositeIndex, 
+      { sourceFields: [...composite.sourceFields, newSourceField] },
+      isOrganization
+    );
+  };
+
+  // Remove source field from composite mapping
+  const handleRemoveSourceField = (compositeIndex: number, sourceFieldKey: string, isOrganization: boolean) => {
+    const mapping = isOrganization ? compositeFieldMapping : compositePersonFieldMapping;
+    const composite = mapping[compositeIndex];
+    
+    const updatedSourceFields = composite.sourceFields
+      .filter(sf => sf.key !== sourceFieldKey)
+      .map((sf, idx) => ({ ...sf, order: idx })); // Reorder
+    
+    handleUpdateCompositeMapping(
+      compositeIndex, 
+      { sourceFields: updatedSourceFields },
+      isOrganization
+    );
+  };
+
+  // Move source field up/down in order
+  const handleMoveSourceField = (
+    compositeIndex: number, 
+    sourceFieldKey: string, 
+    direction: 'up' | 'down',
+    isOrganization: boolean
+  ) => {
+    const mapping = isOrganization ? compositeFieldMapping : compositePersonFieldMapping;
+    const composite = mapping[compositeIndex];
+    
+    const currentIndex = composite.sourceFields.findIndex(sf => sf.key === sourceFieldKey);
+    if (currentIndex === -1) return;
+    
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex < 0 || newIndex >= composite.sourceFields.length) return;
+    
+    const updatedSourceFields = [...composite.sourceFields];
+    [updatedSourceFields[currentIndex], updatedSourceFields[newIndex]] = 
+      [updatedSourceFields[newIndex], updatedSourceFields[currentIndex]];
+    
+    // Update order values
+    updatedSourceFields.forEach((sf, idx) => { sf.order = idx; });
+    
+    handleUpdateCompositeMapping(
+      compositeIndex, 
+      { sourceFields: updatedSourceFields },
+      isOrganization
+    );
   };
 
   // Load sync details
@@ -965,8 +1107,53 @@ export default function PipedriveIntegration() {
               </button>
             </div>
 
-            {/* Organization Field Mapping */}
-            {fieldMappingTab === 'organizations' && (
+            {/* Mode Toggle: Simple vs Composite */}
+            <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => setFieldMappingMode('simple')}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                    fieldMappingMode === 'simple'
+                      ? 'bg-white text-blue-600 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  <ArrowRight className="h-4 w-4 inline-block mr-1" />
+                  Einfache Zuordnung
+                </button>
+                <button
+                  onClick={() => setFieldMappingMode('composite')}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                    fieldMappingMode === 'composite'
+                      ? 'bg-white text-blue-600 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  <Combine className="h-4 w-4 inline-block mr-1" />
+                  Zusammengesetzte Felder
+                </button>
+              </div>
+              {fieldMappingMode === 'composite' && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleAddCompositeMapping(fieldMappingTab === 'organizations')}
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Neue Zusammenführung
+                </Button>
+              )}
+            </div>
+
+            {fieldMappingMode === 'composite' && (
+              <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
+                <strong>Zusammengesetzte Felder:</strong> Kombinieren Sie mehrere Pipedrive-Felder zu einem App-Feld.
+                Ideal für z.B. Straßenname + Hausnummer → Straße.
+              </div>
+            )}
+
+            {/* Organization Field Mapping - Simple Mode */}
+            {fieldMappingTab === 'organizations' && fieldMappingMode === 'simple' && (
               <ScrollArea className="h-[400px]">
                 <Table>
                   <TableHeader>
@@ -1045,8 +1232,203 @@ export default function PipedriveIntegration() {
               </ScrollArea>
             )}
 
-            {/* Person Field Mapping */}
-            {fieldMappingTab === 'persons' && (
+            {/* Organization Field Mapping - Composite Mode */}
+            {fieldMappingTab === 'organizations' && fieldMappingMode === 'composite' && (
+              <div className="space-y-4">
+                {compositeFieldMapping.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500 border-2 border-dashed rounded-lg">
+                    <Combine className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                    <p>Keine zusammengesetzten Felder konfiguriert.</p>
+                    <p className="text-sm">Klicken Sie auf "Neue Zusammenführung" um zu beginnen.</p>
+                  </div>
+                ) : (
+                  compositeFieldMapping.map((composite, compositeIdx) => (
+                    <Card key={compositeIdx} className="border-2 border-blue-100">
+                      <CardContent className="p-4 space-y-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 space-y-3">
+                            {/* Target App Field */}
+                            <div className="flex items-center space-x-3">
+                              <Label className="w-24 text-right flex-shrink-0">Zielfeld:</Label>
+                              <Select
+                                value={composite.appField || ''}
+                                onValueChange={(value) => handleUpdateCompositeMapping(
+                                  compositeIdx, 
+                                  { appField: value },
+                                  true
+                                )}
+                              >
+                                <SelectTrigger className="flex-1">
+                                  <SelectValue placeholder="App-Feld auswählen..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {(() => {
+                                    const categoryOrder = ['Basis', 'Adresse', 'Steckbrief', 'Key Facts', 'Dokumente'];
+                                    const allCategories = [...new Set(appCustomerFields.map(f => f.category))];
+                                    const sortedCategories = [
+                                      ...categoryOrder.filter(c => allCategories.includes(c)),
+                                      ...allCategories.filter(c => !categoryOrder.includes(c))
+                                    ];
+                                    
+                                    return sortedCategories.map((category) => {
+                                      const categoryFields = appCustomerFields.filter(f => f.category === category);
+                                      if (categoryFields.length === 0) return null;
+                                      return (
+                                        <React.Fragment key={category}>
+                                          <SelectItem value={`_header_${category}`} disabled className="font-semibold text-gray-900 bg-gray-100">
+                                            — {category} —
+                                          </SelectItem>
+                                          {categoryFields.map((appField) => (
+                                            <SelectItem key={appField.key} value={appField.key}>
+                                              {appField.label}
+                                            </SelectItem>
+                                          ))}
+                                        </React.Fragment>
+                                      );
+                                    });
+                                  })()}
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            {/* Separator */}
+                            <div className="flex items-center space-x-3">
+                              <Label className="w-24 text-right flex-shrink-0">Trennzeichen:</Label>
+                              <Input
+                                value={composite.separator ?? ' '}
+                                onChange={(e) => handleUpdateCompositeMapping(
+                                  compositeIdx, 
+                                  { separator: e.target.value },
+                                  true
+                                )}
+                                className="w-24"
+                                placeholder="Leerzeichen"
+                              />
+                              <span className="text-xs text-gray-500">
+                                (Leerzeichen = Standard, leer = direkt verbinden)
+                              </span>
+                            </div>
+
+                            {/* Source Fields */}
+                            <div className="flex items-start space-x-3">
+                              <Label className="w-24 text-right flex-shrink-0 pt-2">Quellfelder:</Label>
+                              <div className="flex-1 space-y-2">
+                                {composite.sourceFields.length === 0 ? (
+                                  <p className="text-sm text-gray-500 italic">
+                                    Noch keine Quellfelder ausgewählt
+                                  </p>
+                                ) : (
+                                  <div className="space-y-1">
+                                    {[...composite.sourceFields]
+                                      .sort((a, b) => a.order - b.order)
+                                      .map((source, idx) => {
+                                        const fieldInfo = fields?.organizationFields.find(f => f.key === source.key);
+                                        return (
+                                          <div 
+                                            key={source.key} 
+                                            className="flex items-center space-x-2 bg-gray-50 p-2 rounded"
+                                          >
+                                            <GripVertical className="h-4 w-4 text-gray-400" />
+                                            <Badge variant="outline" className="flex-1">
+                                              <span className="font-mono text-xs mr-2">{idx + 1}.</span>
+                                              {fieldInfo?.name || source.key}
+                                            </Badge>
+                                            <div className="flex items-center space-x-1">
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-7 w-7 p-0"
+                                                disabled={idx === 0}
+                                                onClick={() => handleMoveSourceField(compositeIdx, source.key, 'up', true)}
+                                              >
+                                                <ChevronUp className="h-4 w-4" />
+                                              </Button>
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-7 w-7 p-0"
+                                                disabled={idx === composite.sourceFields.length - 1}
+                                                onClick={() => handleMoveSourceField(compositeIdx, source.key, 'down', true)}
+                                              >
+                                                <ChevronDown className="h-4 w-4" />
+                                              </Button>
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-7 w-7 p-0 text-red-500 hover:text-red-700"
+                                                onClick={() => handleRemoveSourceField(compositeIdx, source.key, true)}
+                                              >
+                                                <Trash2 className="h-4 w-4" />
+                                              </Button>
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
+                                  </div>
+                                )}
+
+                                {/* Add source field */}
+                                <Select
+                                  value=""
+                                  onValueChange={(value) => {
+                                    if (value && value !== '_none_') {
+                                      handleAddSourceField(compositeIdx, value, true);
+                                    }
+                                  }}
+                                >
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="+ Pipedrive-Feld hinzufügen..." />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {fields?.organizationFields
+                                      .filter(f => !['id', 'name', 'add_time', 'update_time', 'visible_to'].includes(f.key))
+                                      .filter(f => !composite.sourceFields.some(sf => sf.key === f.key))
+                                      .map((field) => (
+                                        <SelectItem key={field.key} value={field.key}>
+                                          {field.name}
+                                          <span className="text-xs text-gray-400 ml-2">({field.field_type})</span>
+                                        </SelectItem>
+                                      ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Delete Button */}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-500 hover:text-red-700"
+                            onClick={() => handleRemoveCompositeMapping(compositeIdx, true)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+
+                        {/* Preview */}
+                        {composite.sourceFields.length > 0 && (
+                          <div className="bg-green-50 p-3 rounded text-sm">
+                            <strong>Vorschau:</strong>{' '}
+                            {[...composite.sourceFields]
+                              .sort((a, b) => a.order - b.order)
+                              .map(sf => fields?.organizationFields.find(f => f.key === sf.key)?.name || sf.key)
+                              .join(` ${composite.separator ?? ' '} `)}
+                            {' → '}
+                            <Badge variant="outline">
+                              {appCustomerFields.find(f => f.key === composite.appField)?.label || composite.appField || '(kein Zielfeld)'}
+                            </Badge>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </div>
+            )}
+
+            {/* Person Field Mapping - Simple Mode */}
+            {fieldMappingTab === 'persons' && fieldMappingMode === 'simple' && (
               <ScrollArea className="h-[400px]">
                 <Table>
                   <TableHeader>
@@ -1122,6 +1504,189 @@ export default function PipedriveIntegration() {
                   </TableBody>
                 </Table>
               </ScrollArea>
+            )}
+
+            {/* Person Field Mapping - Composite Mode */}
+            {fieldMappingTab === 'persons' && fieldMappingMode === 'composite' && (
+              <div className="space-y-4">
+                {compositePersonFieldMapping.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500 border-2 border-dashed rounded-lg">
+                    <Combine className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                    <p>Keine zusammengesetzten Felder für Ansprechpartner konfiguriert.</p>
+                    <p className="text-sm">Klicken Sie auf "Neue Zusammenführung" um zu beginnen.</p>
+                  </div>
+                ) : (
+                  compositePersonFieldMapping.map((composite, compositeIdx) => (
+                    <Card key={compositeIdx} className="border-2 border-purple-100">
+                      <CardContent className="p-4 space-y-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 space-y-3">
+                            {/* Target App Field */}
+                            <div className="flex items-center space-x-3">
+                              <Label className="w-24 text-right flex-shrink-0">Zielfeld:</Label>
+                              <Select
+                                value={composite.appField || ''}
+                                onValueChange={(value) => handleUpdateCompositeMapping(
+                                  compositeIdx, 
+                                  { appField: value },
+                                  false
+                                )}
+                              >
+                                <SelectTrigger className="flex-1">
+                                  <SelectValue placeholder="App-Feld auswählen..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {['Basis', 'Erweitert', 'Adresse', 'Benutzerdefiniert'].map((category) => {
+                                    const categoryFields = APP_CONTACT_FIELDS.filter(f => f.category === category);
+                                    if (categoryFields.length === 0) return null;
+                                    return (
+                                      <React.Fragment key={category}>
+                                        <SelectItem value={`_header_${category}`} disabled className="font-semibold text-gray-900 bg-gray-100">
+                                          — {category} —
+                                        </SelectItem>
+                                        {categoryFields.map((appField) => (
+                                          <SelectItem key={appField.key} value={appField.key}>
+                                            {appField.label}
+                                          </SelectItem>
+                                        ))}
+                                      </React.Fragment>
+                                    );
+                                  })}
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            {/* Separator */}
+                            <div className="flex items-center space-x-3">
+                              <Label className="w-24 text-right flex-shrink-0">Trennzeichen:</Label>
+                              <Input
+                                value={composite.separator ?? ' '}
+                                onChange={(e) => handleUpdateCompositeMapping(
+                                  compositeIdx, 
+                                  { separator: e.target.value },
+                                  false
+                                )}
+                                className="w-24"
+                                placeholder="Leerzeichen"
+                              />
+                            </div>
+
+                            {/* Source Fields */}
+                            <div className="flex items-start space-x-3">
+                              <Label className="w-24 text-right flex-shrink-0 pt-2">Quellfelder:</Label>
+                              <div className="flex-1 space-y-2">
+                                {composite.sourceFields.length === 0 ? (
+                                  <p className="text-sm text-gray-500 italic">
+                                    Noch keine Quellfelder ausgewählt
+                                  </p>
+                                ) : (
+                                  <div className="space-y-1">
+                                    {[...composite.sourceFields]
+                                      .sort((a, b) => a.order - b.order)
+                                      .map((source, idx) => {
+                                        const fieldInfo = fields?.personFields?.find(f => f.key === source.key);
+                                        return (
+                                          <div 
+                                            key={source.key} 
+                                            className="flex items-center space-x-2 bg-gray-50 p-2 rounded"
+                                          >
+                                            <GripVertical className="h-4 w-4 text-gray-400" />
+                                            <Badge variant="outline" className="flex-1">
+                                              <span className="font-mono text-xs mr-2">{idx + 1}.</span>
+                                              {fieldInfo?.name || source.key}
+                                            </Badge>
+                                            <div className="flex items-center space-x-1">
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-7 w-7 p-0"
+                                                disabled={idx === 0}
+                                                onClick={() => handleMoveSourceField(compositeIdx, source.key, 'up', false)}
+                                              >
+                                                <ChevronUp className="h-4 w-4" />
+                                              </Button>
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-7 w-7 p-0"
+                                                disabled={idx === composite.sourceFields.length - 1}
+                                                onClick={() => handleMoveSourceField(compositeIdx, source.key, 'down', false)}
+                                              >
+                                                <ChevronDown className="h-4 w-4" />
+                                              </Button>
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-7 w-7 p-0 text-red-500 hover:text-red-700"
+                                                onClick={() => handleRemoveSourceField(compositeIdx, source.key, false)}
+                                              >
+                                                <Trash2 className="h-4 w-4" />
+                                              </Button>
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
+                                  </div>
+                                )}
+
+                                {/* Add source field */}
+                                <Select
+                                  value=""
+                                  onValueChange={(value) => {
+                                    if (value && value !== '_none_') {
+                                      handleAddSourceField(compositeIdx, value, false);
+                                    }
+                                  }}
+                                >
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="+ Pipedrive-Feld hinzufügen..." />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {fields?.personFields
+                                      ?.filter(f => !['id', 'name', 'first_name', 'last_name', 'add_time', 'update_time', 'visible_to', 'email', 'phone'].includes(f.key))
+                                      .filter(f => !composite.sourceFields.some(sf => sf.key === f.key))
+                                      .map((field) => (
+                                        <SelectItem key={field.key} value={field.key}>
+                                          {field.name}
+                                          <span className="text-xs text-gray-400 ml-2">({field.field_type})</span>
+                                        </SelectItem>
+                                      ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Delete Button */}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-500 hover:text-red-700"
+                            onClick={() => handleRemoveCompositeMapping(compositeIdx, false)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+
+                        {/* Preview */}
+                        {composite.sourceFields.length > 0 && (
+                          <div className="bg-purple-50 p-3 rounded text-sm">
+                            <strong>Vorschau:</strong>{' '}
+                            {[...composite.sourceFields]
+                              .sort((a, b) => a.order - b.order)
+                              .map(sf => fields?.personFields?.find(f => f.key === sf.key)?.name || sf.key)
+                              .join(` ${composite.separator ?? ' '} `)}
+                            {' → '}
+                            <Badge variant="outline">
+                              {APP_CONTACT_FIELDS.find(f => f.key === composite.appField)?.label || composite.appField || '(kein Zielfeld)'}
+                            </Badge>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </div>
             )}
           </CardContent>
         </Card>

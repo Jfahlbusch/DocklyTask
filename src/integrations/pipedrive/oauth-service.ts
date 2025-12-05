@@ -444,6 +444,72 @@ export async function updatePersonFieldMapping(
 }
 
 /**
+ * Updates advanced field mapping (with composite field support)
+ */
+export async function updateAdvancedFieldMapping(
+  tenantId: string,
+  advancedMapping?: {
+    simple: Record<string, string>;
+    composite: Array<{
+      appField: string;
+      sourceFields: Array<{ key: string; order: number }>;
+      separator?: string;
+    }>;
+  },
+  advancedPersonMapping?: {
+    simple: Record<string, string>;
+    composite: Array<{
+      appField: string;
+      sourceFields: Array<{ key: string; order: number }>;
+      separator?: string;
+    }>;
+  }
+): Promise<void> {
+  const connection = await db.integrationConnection.findUnique({
+    where: {
+      tenantId_integrationType: {
+        tenantId,
+        integrationType: 'pipedrive',
+      },
+    },
+  });
+
+  if (!connection) {
+    throw new Error('No Pipedrive connection found');
+  }
+
+  const currentConfig = JSON.parse(connection.syncConfig || '{}');
+  const newConfig = { ...DEFAULT_SYNC_CONFIG, ...currentConfig };
+
+  // Update organization advanced mapping
+  if (advancedMapping) {
+    newConfig.advancedFieldMapping = advancedMapping;
+    // Also update the simple customFieldMapping for backwards compatibility
+    newConfig.customFieldMapping = advancedMapping.simple;
+  }
+
+  // Update person advanced mapping
+  if (advancedPersonMapping) {
+    newConfig.advancedPersonFieldMapping = advancedPersonMapping;
+    // Also update the simple personFieldMapping for backwards compatibility
+    newConfig.personFieldMapping = advancedPersonMapping.simple;
+  }
+
+  // Update fieldMapping too for display purposes
+  const fieldMappingUpdate = advancedMapping 
+    ? JSON.stringify(advancedMapping.simple) 
+    : connection.fieldMapping;
+
+  await db.integrationConnection.update({
+    where: { id: connection.id },
+    data: {
+      fieldMapping: fieldMappingUpdate,
+      syncConfig: JSON.stringify(newConfig),
+    },
+  });
+}
+
+/**
  * Updates the sync configuration
  */
 export async function updateSyncConfig(

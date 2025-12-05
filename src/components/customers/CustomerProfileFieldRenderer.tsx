@@ -3,7 +3,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink, User, Mail, Phone } from 'lucide-react';
-import { ProfileSection, CUSTOMER_PROFILE_SECTIONS_STORAGE_KEY, DEFAULT_PROFILE_SECTIONS } from '@/lib/customer-profile-types';
+import { ProfileSection, CUSTOMER_PROFILE_SECTIONS_STORAGE_KEY, DEFAULT_PROFILE_SECTIONS, DEFAULT_CUSTOMER_PROFILE_FIELDS } from '@/lib/customer-profile-types';
 
 // Diese Typen müssen mit CustomerProfileSchemaEditor synchron sein
 export type FieldType = 'text' | 'textarea' | 'number' | 'date' | 'boolean' | 'link' | 'dropdown' | 'richtext' | 'contact';
@@ -83,15 +83,16 @@ export function loadCustomerProfileSections(): ProfileSection[] {
 
 /**
  * Lädt das Kundensteckbrief-Schema aus dem LocalStorage
+ * Falls kein Schema vorhanden ist, werden die Default-Felder zurückgegeben
  */
 export function loadCustomerProfileSchema(): FieldDef[] {
   try {
     const raw = typeof window !== 'undefined' ? window.localStorage.getItem(STORAGE_KEY) : null;
-    if (!raw) return [];
+    if (!raw) return DEFAULT_CUSTOMER_PROFILE_FIELDS;
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_CUSTOMER_PROFILE_FIELDS;
   } catch {
-    return [];
+    return DEFAULT_CUSTOMER_PROFILE_FIELDS;
   }
 }
 
